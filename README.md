@@ -1,6 +1,6 @@
 # MixSIAR_Thesis
 
-.
+```
 ├── data                                  # raw biomass and isotope data
 │   ├── Biomass                           # Biomass weights from two efforts
 │   ├── Holdout                           # Folder to place holdout
@@ -12,4 +12,4 @@
 │   └── posterior_density_high_salinity   # Empty folder to hold mixsiar outputs 
 ├── src                                   # supporting functions
 └── README.md
-.
+```
