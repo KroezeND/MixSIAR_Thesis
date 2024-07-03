@@ -74,7 +74,7 @@ ggplot(traits_filtered, aes(y= tot_bgb, x = factor(elev_bi), color = factor(spec
   labs(x = "Elevation", y = "Total Belowground Biomass", color = "Competition") + # Custom labels
   scale_color_manual(values = c("#EE964B","#19647E", "#ED254E"),labels = c("Polyculture", "SCAM","SPPA")) # Set custom colors
 
-ggplot(traits_filtered, aes(y= rsr, x = factor(salinity), color = factor(species))) +
+ggplot(traits_filtered, aes(y= rsr, x = factor(elev_bi), color = factor(species))) +
   geom_jitter(width = 0.2, height = 0.1) +  # Adjust jitter amount
   theme_bw() +
   ylim(0,3.6) +
