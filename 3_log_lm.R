@@ -30,7 +30,7 @@ colors <- c("#c51b7d", "#de77ae", "#f1b6da", "#e6f5d0", "#b8e186", "#7fbc41", "#
 
 color_map <- setNames(colors, unique_years)
 
-ggplot() +
+ggplot2::ggplot() +
   geom_line(data = combined_data, aes(x = x, y = y, color = year), linewidth = 0.5) +  # Adjust line size, color by interaction
   geom_jitter(data = bgb_biomass, aes(x = midpoint, y = log(weight_density), color = factor(seed_year)), alpha = 0.5,width = 0.3) +  # Adjust point transparency
   # facet_wrap(~ seed_year) +  # Facet by seed_year
@@ -56,7 +56,7 @@ g <- list()
 for(i in names(env_list)){
   treatment <- env_list[[i]]
   treatment <- do.call(rbind, treatment)
-  g[[i]] <- ggplot() +
+  g[[i]] <- ggplot2::ggplot() +
     geom_line(data = treatment, aes(x = x, y = y, color = year), linewidth = 0.5) +  # Adjust line size, color by interaction
     geom_jitter(data = bgb_biomass[bgb_biomass$env_treatment==i,], 
                 aes(x = midpoint, y = log(weight_density), 

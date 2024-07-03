@@ -57,7 +57,7 @@ bgb_biomass$weight_density <- ifelse(bgb_biomass$segment_bottom == "end",
 bgb_biomass <- join_and_calculate_props(bgb_biomass,mixture)
 
 # Plot the mixing proportion of SCAM
-ggplot(mixture, aes(x = seed_year, y = p.scam, color = env_treatment)) +
+ggplot2::ggplot(mixture, aes(x = seed_year, y = p.scam, color = env_treatment)) +
   geom_point() +  # Plot points for each data point
   geom_ribbon(aes(ymin = p.scam_lower, ymax = p.scam_upper), linetype = 2, alpha = 0.15) + # Add ribbon for CrI
   geom_hline(yintercept = 0.5, linetype = "dashed", color = "red") +  # Add horizontal line
@@ -67,7 +67,7 @@ ggplot(mixture, aes(x = seed_year, y = p.scam, color = env_treatment)) +
   labs(title = "p.scam by Year and Treatment (95% CrI)", x = "Year", y = "p.scam") +
   theme_bw()  # Set a black and white theme (optional)
 
-ggplot(bgb_biomass, aes(x = seed_year, y = prop_scam, color = env_treatment, shape = Depth)) +
+ggplot2::ggplot(bgb_biomass, aes(x = seed_year, y = prop_scam, color = env_treatment, shape = Depth)) +
   geom_point() +  # Plot points for each data point
   geom_errorbar(aes(ymin = prop_scam_lower, ymax = prop_scam_upper), inherit.aes = TRUE) +  # Error bars using existing aesthetics
   ylim(0,0.018) +
@@ -76,7 +76,7 @@ ggplot(bgb_biomass, aes(x = seed_year, y = prop_scam, color = env_treatment, sha
        x = "Year", y = expression(Weight~Density~of~SCAM~(g/cm^{3}))) +
   theme_bw()  # Set a black and white theme (optional)
 
-ggplot(bgb_biomass, aes(x = seed_year, y = prop_sppa, color = env_treatment, shape = Depth)) +
+ggplot2::ggplot(bgb_biomass, aes(x = seed_year, y = prop_sppa, color = env_treatment, shape = Depth)) +
   geom_point() +  # Plot points for each data point
   geom_errorbar(aes(ymin = prop_sppa_lower, ymax = prop_sppa_upper), inherit.aes = TRUE) +  # Error bars using existing aesthetics
   ylim(0,0.018) +
