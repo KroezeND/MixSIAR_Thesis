@@ -1,0 +1,110 @@
+---
+title: "AMW_Code_Review"
+author: "Alyssa Willson"
+date: "2024-07-04"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Questions
+
+* Is there a difference in total biomass and root-to-shoot ratio between monoculture/polyculture, between low/high salinity, and between low/high elevation?
+* How does the proportion of Schoenoplectus americanus to Spartina patens belowground biomass change in response to changes in environmental regimes?
+* Does the proportion of Schoenoplectus americanus belowground change as a result of its seed age (i.e. does genotype have any influence on its proportion across environmental gradients)?
+* Does the allocation of biomass across layers change as a result of environmental conditions or age of genotype?
+
+**It seems like the first two questions are not only not addressed in this workflow, but they seem like they were addressed by previous analyses on this project? I'm confused why these questions are relevant to the present analysis, and reciprocally, where these questions are addressed in the present analysis.**
+
+## Hypotheses
+
+**There are no stated hypotheses anywhere in the presentation or repository.**
+
+## Questions for each R script
+
+1. Does each file have a description?
+2. Are all inputs and outputs indicated at the beginning and end?
+3. Do they match the readme?
+4. Is the code commented?
+5. Does it run and reproduce results?
+6. Does it do what it says it does?
+
+Additional comments will be bulleted after the numbered questions.
+
+### 0_data_assembly.R
+
+1. No description. There should be a description at the beginning of the script like what's in the README.
+2. To me, it would be helpful to have a list of inputs and outputs at the beginning of the script
+3. CEST_Sample_Runs.csv is in the readme and not in the script
+4. Yes
+5. Yes, the code runs perfectly
+6. Some problems need to be fixed, especially that the holdout data is never completed.
+
+* Why are there SO many input files? Like why are there 8 numbered files for "summer samples"?
+* The here() function doesn't do anything
+* It would be good to clear your global environment at the beginning of the script (rm(list = ls()))
+* I don't understand why you combine bgb_ND and bgb_SI in line 15 and then continue to modify bgb_ND in lines 23-25?
+* Why are there so many NAs in the traits dataframe? Do you want to keep rows with NAs?
+* You have a temporary fix at line 122 that should be remedied since this is the final analysis.
+* You never finish collating your holdout data. You have the trait data, but you don't ever add the data you actually need, which is the isotope data.
+* I would not consider any of the files you're saving "outputs" since you haven't done any analyses yet.
+* I also went through data_process.R at the same time and it looks good
+
+### 1_run_model.R
+
+1. No description. There should be a description at the beginning of the script like what's in the README.
+2. To me, it would be helpful to have a list of inputs and outputs at the beginning of the script
+3. Not all outputs listed in README
+4. Yes. Very good commenting. Very easy to follow.
+5. Yes. You may want to set.seed again since this is actually a stochastic process. Not necessary but something to think about.
+6. Yes. The model structure makes sense based on the questions asked. This was also verified during our conversation with JMc.
+
+* The here() function doesn't do anything
+* It would be good to clear your global environment at the beginning of the script
+* I have a really hard time interpreting the plot produced at lines 25-26. What do the points represent?
+* The model should be put in its own directory
+
+### 2_biomass_calc.R
+
+1. No description. There should be a description at the  beginning of the script like what's in the README.
+2. To me, it would be helpful to have a list of inputs and outputs at the beginning of the script
+3. Yes. It's a little confusing that "bgb_biomass" is an input and an output, even though they have different suffixes.
+4. Yes. Can you add to the notes that you know that SCAM is the first mixing proportion in the output because it is alphabetically before SPPA?
+5. Yes, but with a caveat. See below.
+6. Yes
+
+* The here() function doesn't do anything
+* It would be good to clear your global environment at the beginning of the script
+* The function at line 39 should be improved to get rid of the warning messages. If you use the unique() function when assigning the variables from the matching_row dataframe to bgb_biomass, you won't get warnings about number of items to replace being a multiple of replacement length. This would also ensure you are using the data properly.
+
+### 3_log_lm.R
+
+I believe this script is mostly deprecated at this point.
+
+1. No description. There should be a description at the beginning of the script like what's in the README.
+2. To me, it would be helpful to have a list of inputs at the beginning of the script and maybe include that there are no outputs like you do in the README
+3. Yes
+4. Yes
+5. Yes
+6. Not really because it looks at total biomess, instead of biomass by species consistent with the purpose and output of the mixing model
+
+* The here() function doesn't do anything
+* It would be good to clear your global environment at the beginning of the script
+
+### 4_graphing.R
+
+1. No description. There should be a description at the beginning of the script like what's in the README.
+2. To me, it would be helpful to have a list of inputs at the beginning of the script and maybe includee that there are no outputs like you do in the README
+3. Yes
+4. More comments would be helpful for explaining what the plots are
+5. Yes
+6. Yes
+
+* The here() function doesn't do anything
+* It would be good to clear your global environment at the beginning of the script
+* Can remove plots related to RSR
+### Other
+
+* There is no use of the withheld validation data!!
