@@ -1,12 +1,14 @@
 library(tidyverse)
 library(here)
 
+(rm(list = ls()))
+
 source("src/append_functions.R")
 
 jags.Depth <- readRDS("output/Environment_Depth Model/jags.Depth.rds")
 
 # Load in Clean and Formatted Data
-mixture <- read.csv("output/data/training.csv") # training dataset 
+mixture <- read.csv("data/training.csv") # training dataset 
 
 # Directly access MCMC draws for SCAM mixing proportion for each individual 
 # assumes SCAM is first mixing element
@@ -26,7 +28,7 @@ mixture$p.sppa_lower <- apply(p.sppa, 2, FUN = quantile, probs = 0.025)
 mixture$p.sppa_upper <- apply(p.sppa, 2, FUN = quantile, probs = 0.975)
 
 # Load in compiled weight values
-bgb_biomass <- read.csv("output/data/bgb_biomass.csv") 
+bgb_biomass <- read.csv("data/bgb_biomass.csv") 
 bgb_biomass <- bgb_biomass[bgb_biomass$pot_no %in% mixture$pot_no,] # all weights that have isotopic measurements
 
 # Add depth column to bgb_biomass using lapply
@@ -72,32 +74,25 @@ bgb_biomass$age_group <- ifelse(bgb_biomass$seed_year < 1950, "pre-1950",
                                 ifelse(bgb_biomass$seed_year >= 1951 & bgb_biomass$seed_year <= 2000, "1951-2000", "post-2000"))
 
 
-p <- bgb_biomass %>%
+bgb_biomass %>%
   mutate(age_group = fct_relevel(age_group,"pre-1950","1951-2000","post-2000")) %>%
   ggplot(aes(y=Depth, x=prop_scam, fill = age_group)) + 
   geom_violin(position=position_dodge(0.95),scale = 'width',trim = T) +  # Dodge violin plots slightly
   geom_boxplot(position=position_dodge(0.95),width = 0.25) +
-  # xlim(0,0.0015) +
   scale_fill_manual(values = color_map) +  # Set color based on year
   labs(y = "Depth", x = "Weight Density SCAM (g/cm3)") + # Custom labels
   theme_bw()+
   geom_hline(yintercept = 1.5:2.5,color = "red",linetype = "dashed")+
-  guides(fill = guide_legend(reverse=TRUE)) +
-  expand_limits(x=0)
+  guides(fill = guide_legend(reverse=TRUE))
 
-p
 
-p_btm <- bgb_biomass[bgb_biomass$Depth=="BTM",] %>%
+bgb_biomass[bgb_biomass$Depth=="BTM",] %>%
   mutate(age_group = fct_relevel(age_group,"pre-1950","1951-2000","post-2000")) %>%
   ggplot(aes(y=Depth, x=prop_scam, fill = age_group)) + 
   geom_violin(position=position_dodge(0.95),scale = 'width',trim = T) +  # Dodge violin plots slightly
   geom_boxplot(position=position_dodge(0.95),width = 0.25) +
-  # xlim(0,0.0015) +
   scale_fill_manual(values = color_map) +  # Set color based on year
   labs(y = "Depth", x = "Weight Density SCAM (g/cm3)") + # Custom labels
   theme_bw()+
   guides(fill = guide_legend(reverse=TRUE)) 
-  # expand_limits(x=0)
-p_btm
-
-## community ecology could explain this difference
+ 

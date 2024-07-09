@@ -1,20 +1,29 @@
+# Author: N. Kroeze
+# Description: This script is meant to set the characteristics of the mixing model, define using MixSIAR,
+# run the model, and save the outputs as intermediary products
+
+# Setting up Depth as a factor in the mixing model
+
+# Inputs:  "training.csv","marsh_source_all.csv","marsh_discr.csv"
+# Outputs: "isospace_plot.pdf","prior_plot.pdf","jags.Env.rds","figs/isospace_env_plot.pdf",
+#          "figs/prior_env_plot.pdf,"diagnostics.pdf","diagnostics.txt","summary_statistics.txt",
+#          "MixSIAR_model.txt","posterior_density_high_sal","posterior_density_low_sal" 
+
 library(MixSIAR)
 library(tidyverse)
 library(here)
 
-# Setting up Depth as a factor in the mixing model
-# This script is meant to set the characteristics of the mixing model, define using MixSIAR,
-# run the model, and save the outputs as intermediary products
+(rm(list = ls()))
 
 # Load in mixture data as a list
-mix <- MixSIAR::load_mix_data(filename="output/data/training.csv", 
+mix <- MixSIAR::load_mix_data(filename="data/training.csv", 
                               iso_names="d13C", 
                               factors = c("env_treatment","Depth"), 
                               fac_random = c(FALSE,FALSE), 
                               fac_nested = c(FALSE,FALSE),
                               cont_effects="seed_year")
 # Load in source data as a list
-source <- MixSIAR::load_source_data(filename="output/data/marsh_source_all.csv", 
+source <- MixSIAR::load_source_data(filename="data/marsh_source_all.csv", 
                                     source_factors= NULL,  
                                     conc_dep=FALSE, 
                                     data_type="raw", 
@@ -23,10 +32,10 @@ source <- MixSIAR::load_source_data(filename="output/data/marsh_source_all.csv",
 discr <- MixSIAR::load_discr_data(filename = "data/marsh_discr.csv",mix)
 
 MixSIAR::plot_data_one_iso(mix,source,discr,
-                           plot_save_pdf=TRUE, plot_save_png=FALSE, "figs/isospace_plot")
+                           plot_save_pdf=TRUE, plot_save_png=FALSE, "figs/isospace_Depth_plot")
 # dev.off() # uncomment if pop ups are cumbersome
 MixSIAR::plot_prior(alpha.prior=1,
-                    source,plot_save_pdf=TRUE, plot_save_png=FALSE, "figs/prior_plot")
+                    source,plot_save_pdf=TRUE, plot_save_png=FALSE, "figs/prior_Depth_plot")
 
 model_filename <- "output/Environment_Depth Model/MixSIAR_model.txt"
 # When both resid_error and process_err are TRUE, the multiplicative error term
