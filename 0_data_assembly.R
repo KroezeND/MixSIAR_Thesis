@@ -27,7 +27,7 @@ bgb_ND_updated <- bgb_ND %>%
 # Merge bgb_ND_updated with traits dataframe, updates with new weights
 traits_updated <- merge(traits, bgb_ND_updated[, c("pot_no", "total_weight_g")], by = "pot_no", all.x = TRUE) %>%
   dplyr::mutate(tot_bgb = dplyr::coalesce(tot_bgb, total_weight_g)) %>% # Combine values using coalesce
-  dplyr::select(-one_of(c("total_weight_g")))
+  dplyr::select(-tidyselect::one_of(c("total_weight_g")))
 
 #Calculate rsr in traits
 rsr <- traits_updated$tot_bgb/traits_updated$tot_agb

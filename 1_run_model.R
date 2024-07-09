@@ -44,7 +44,7 @@ MixSIAR::write_JAGS_model(model_filename, resid_err, process_err, mix, source)
 # “long” 	     300,000 	   200,000 	  100 	3         Untested
 # “very long”  1,000,000 	 500,000 	  500 	3         Untested
 # “extreme” 	 3,000,000 	 1,500,000  500 	3         Untested
-jags.1 <- MixSIAR::run_model(run="very short", mix, source, discr, model_filename)
+jags.1 <- MixSIAR::run_model(run="normal", mix, source, discr, model_filename)
 
 output_options <- list(summary_save = TRUE,                         # save summary statistics as txt file
                        summary_name = "output/summary_statistics",  # path for summary stats
@@ -73,4 +73,4 @@ output_options <- list(summary_save = TRUE,                         # save summa
 MixSIAR::output_JAGS(jags.1, mix, source, output_options) # safe to ignore warnings - NDK
 
 # save jags.1 object for further analysis
-saveRDS(jags.1,"output/jags.1.rds")
+saveRDS(jags.1,"output/jags.normal.rds")
