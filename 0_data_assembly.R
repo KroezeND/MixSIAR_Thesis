@@ -1,9 +1,32 @@
+# Author: N. Kroeze
+# Description: This script cleans the raw biomass and isotope data and formats each 
+
+# Inputs:
+# "Belowground_Biomass.csv" Biomass census spreadsheet from Kleiner 2022
+# "BlueGenes2023_Belowground_Biomass" - BG2023.csv Newly collected biomass spreadsheet 
+# "Compiled_Traits.csv" Trait census data from Kleiner 2022
+# "220729_JPM.xls" - CN sum.csv Smithsonian lab isotope data
+# "220801_JPM.xls" - CN sum.csv Smithsonian lab isotope data
+# "220519_JPM.xls" - CN sum.csv Smithsonian lab isotope data
+# "CEST_Sample_Runs.csv" CEST lab isotope data - all runs, not including replicate testing
+# "Trial_Carbon_Data_unedited.csv" CEST lab isotope data - replicate testing
+# Corr_Trial_COMP.csv CEST lab isotope data - replicate testing
+# Milled_replicates.csv CEST lab isotope data - replicate testing
+
+# Outputs:
+# "marsh_source_all.csv" raw source isotopes formatted to MixSIAR specifications, 151 observations of 2 variables
+# "Compiled_Traits_appended.csv" traits with added weights and root-shoot-ratios, 672 observations of 35 variables
+# "training.csv" mixture distribution for training MixSIAR model, 274 observations of 17 variables
+# "bgb_biomass.csv" all weights across each layer, 1692 observations of 11 variables
+# "holdout_DONOTTOUCH.csv" holdout data, 49 observations of 36 variables
+
 library(tidyverse)
 library(here)
-here::here()
+
+(rm(list = ls()))
 
 source("src/data_process.R")
-set.seed(0)
+set.seed(1)
 # Load and Append Trait data with full belowground biomass calculation from 2023 efforts
 # Trait Data from HSK 2021 BlueGenes experiment, describes the environmental conditions and genotype 
 traits <- read.csv("data/Biomass/Compiled_Traits.csv")
@@ -12,13 +35,6 @@ traits <- read.csv("data/Biomass/Compiled_Traits.csv")
 bgb_ND <- read.csv("data/Biomass/BlueGenes2023_Belowground_Biomass - BG2023.csv",header = T) 
 bgb_SI <- read.csv("data/Biomass/Belowground_Biomass.csv")
 
-bgb_biomass <- rbind(bgb_ND,bgb_SI)
-# Assumed end considers the average length of each core and imposes this due to core collapse
-assumed_end <- mean(as.numeric(bgb_biomass$segment_bottom[bgb_biomass$segment_top==20]),na.rm = TRUE)
-bgb_biomass <- bgb_biomass %>%
-  dplyr::mutate(segment_bottom_adjusted = ifelse(is.na(segment_bottom) | segment_bottom == "end", 
-                                                 assumed_end,segment_bottom),
-                midpoint = round((segment_top + as.numeric(segment_bottom_adjusted)) / 2,3))
 # Update bgb_ND with total weight_g per pot_no
 bgb_ND_updated <- bgb_ND %>%
   dplyr::group_by(pot_no) %>%
@@ -32,6 +48,14 @@ traits_updated <- merge(traits, bgb_ND_updated[, c("pot_no", "total_weight_g")],
 #Calculate rsr in traits
 rsr <- traits_updated$tot_bgb/traits_updated$tot_agb
 traits_updated$rsr <- rsr
+
+bgb_biomass <- rbind(bgb_ND,bgb_SI)
+# Assumed end considers the average length of each core and imposes this due to core collapse
+assumed_end <- mean(as.numeric(bgb_biomass$segment_bottom[bgb_biomass$segment_top==20]),na.rm = TRUE)
+bgb_biomass <- bgb_biomass %>%
+  dplyr::mutate(segment_bottom_adjusted = ifelse(is.na(segment_bottom) | segment_bottom == "end", 
+                                                 assumed_end,segment_bottom),
+                midpoint = round((segment_top + as.numeric(segment_bottom_adjusted)) / 2,3))
 
 
 # Load Raw Isotope Results
@@ -51,14 +75,7 @@ ISO_trial <- do.call(rbind, lapply(c("data/Isotope/CEST/Trial_Carbon_Data_unedit
 # ISO_trial represents the test runs that assessed the repeatability of results 
 # across grinding methods, across labs/instruments, and across replicates
 
-ISO_ND <- do.call(rbind, lapply(c("data/Isotope/CEST/Summer_Samples_1_Kroeze.csv",
-                                  "data/Isotope/CEST/Summer_Samples_2_Kroeze.csv",
-                                  "data/Isotope/CEST/Summer_Samples_3_Kroeze.csv",
-                                  "data/Isotope/CEST/Summer_Samples_4_Kroeze.csv",
-                                  "data/Isotope/CEST/Summer_Samples_5_Kroeze.csv",
-                                  "data/Isotope/CEST/Summer_Samples_6_Kroeze.csv",
-                                  "data/Isotope/CEST/Summer_Samples_7_Kroeze.csv",
-                                  "data/Isotope/CEST/Summer_Samples_8_Kroeze.csv"),
+ISO_ND <- do.call(rbind, lapply(c("data/Isotope/CEST/CEST_Sample_Runs.csv"),
                                 function(file) process_CEST_data(read.csv(file, header = TRUE))))
 # ISO_ND are the raw isotope from CEST, processed in the same way as the SI data
 
@@ -104,6 +121,8 @@ holdout_data <- traits_holdout %>%
 
 holdout_ids <- unique(holdout_data$pot_no)
 
+holdout <- ISO_COMP[ISO_COMP$pot_no %in% holdout_ids,] # actual hold out data to be saved
+
 # Training data is everything not in holdout
 training_data <- traits_holdout[!(traits_holdout$pot_no %in% holdout_ids), ]
 
@@ -119,8 +138,6 @@ training <- ISO_COMP[ISO_COMP$pot_no %in% training_data$pot_no,]
 training$env_treatment <- paste0(ifelse(training$salinity == 0, "low_sal", "high_sal"),
                                  "/",
                                  ifelse(training$elev_bi == 0, "low_elev", "high_elev"))
-training <- dplyr::filter(training, pot_no != 1814) # temporary fix due to missing 1814 MID and BTM
-
 
 # Define depth conversion dictionary
 depth_conversion <- c(TOP = 0, MID = 10, BTM = 20)
@@ -145,11 +162,11 @@ for (i in 1:nrow(training)) {
 }
 
 # Save modified objects
-write.csv(ISO_source, "output/data/marsh_source_all.csv",row.names=FALSE)
-write.csv(traits_updated,"output/data/Compiled_Traits_appended.csv")
-write.csv(training, "output/data/training.csv",row.names = FALSE)
-write_csv(bgb_biomass, "output/data/bgb_biomass.csv")
-write.csv(holdout_data, "data/Holdout/holdout_DONOTTOUCH.csv",row.names = T)
+write.csv(ISO_source, "data/marsh_source_all.csv",row.names=FALSE)
+write.csv(traits_updated,"data/Compiled_Traits_appended.csv")
+write.csv(training, "data/training.csv",row.names = FALSE)
+write_csv(bgb_biomass, "data/bgb_biomass.csv")
+write.csv(holdout, "data/Holdout/holdout_DONOTTOUCH.csv",row.names = T)
 
 
 

@@ -24,14 +24,14 @@ join_and_assign_values <- function(bgb_biomass, mixture) {
     
     # Assign values if a match is found
     if (nrow(matching_row) > 0) {
-      bgb_biomass$p.scam[i] <- matching_row$p.scam
-      bgb_biomass$p.scam_lower[i] <- matching_row$p.scam_lower
-      bgb_biomass$p.scam_upper[i] <- matching_row$p.scam_upper
-      bgb_biomass$env_treatment[i] <- matching_row$env_treatment
-      bgb_biomass$seed_year[i] <- matching_row$seed_year
-      bgb_biomass$p.sppa[i] <- matching_row$p.sppa
-      bgb_biomass$p.sppa_lower[i] <- matching_row$p.sppa_lower
-      bgb_biomass$p.sppa_upper[i] <- matching_row$p.sppa_upper
+      bgb_biomass$p.scam[i] <- unique(matching_row$p.scam)
+      bgb_biomass$p.scam_lower[i] <- unique(matching_row$p.scam_lower)
+      bgb_biomass$p.scam_upper[i] <- unique(matching_row$p.scam_upper)
+      bgb_biomass$env_treatment[i] <- unique(matching_row$env_treatment)
+      bgb_biomass$seed_year[i] <- unique(matching_row$seed_year)
+      bgb_biomass$p.sppa[i] <- unique(matching_row$p.sppa)
+      bgb_biomass$p.sppa_lower[i] <- unique(matching_row$p.sppa_lower)
+      bgb_biomass$p.sppa_upper[i] <- unique(matching_row$p.sppa_upper)
     }
   }
   

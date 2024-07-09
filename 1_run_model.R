@@ -1,20 +1,27 @@
+# Author: N. Kroeze
+# Description: This script is meant to set the characteristics of the mixing model, define using MixSIAR,
+# run the model, and save the outputs as intermediary products
+
+# Inputs:  "training.csv","marsh_source_all.csv","marsh_discr.csv"
+# Outputs: "jags.Env.rds","figs/isospace_env_plot.pdf","figs/prior_env_plot.pdf,
+#          "diagnostics.pdf","diagnostics.txt","summary_statistics.txt",
+#          "MixSIAR_model.txt","posterior_density_high_sal","posterior_density_low_sal"  
+
 library(MixSIAR)
 library(tidyverse)
 library(here)
-here::here()
 
-# This script is meant to set the characteristics of the mixing model, define using MixSIAR,
-# run the model, and save the outputs as intermediary products
+(rm(list = ls()))
 
 # Load in mixture data as a list
-mix <- MixSIAR::load_mix_data(filename="output/data/training.csv", 
+mix <- MixSIAR::load_mix_data(filename="data/training.csv", 
                               iso_names="d13C", 
                               factors = c("env_treatment"), 
                               fac_random = c(FALSE), 
                               fac_nested = c(FALSE),
                               cont_effects="seed_year")
 # Load in source data as a list
-source <- MixSIAR::load_source_data(filename="output/data/marsh_source_all.csv", 
+source <- MixSIAR::load_source_data(filename="data/marsh_source_all.csv", 
                                     source_factors= NULL,  
                                     conc_dep=FALSE, 
                                     data_type="raw", 
@@ -23,12 +30,12 @@ source <- MixSIAR::load_source_data(filename="output/data/marsh_source_all.csv",
 discr <- MixSIAR::load_discr_data(filename = "data/marsh_discr.csv",mix)
 
 MixSIAR::plot_data_one_iso(mix,source,discr,
-                           plot_save_pdf=TRUE, plot_save_png=FALSE, "figs/isospace_plot")
+                           plot_save_pdf=TRUE, plot_save_png=FALSE, "figs/isospace_env_plot")
 # dev.off() # uncomment if pop ups are cumbersome
 MixSIAR::plot_prior(alpha.prior=1,
-                    source,plot_save_pdf=TRUE, plot_save_png=FALSE, "figs/prior_plot")
+                    source,plot_save_pdf=TRUE, plot_save_png=FALSE, "figs/prior_env_plot")
 
-model_filename <- "MixSIAR_model.txt"
+model_filename <- "output/Environment Model/MixSIAR_model.txt"
 # When both resid_error and process_err are TRUE, the multiplicative error term
 # is estimated, as described in Stock & Semmens 2016
 resid_err <- TRUE # setting up error structure, residual true
@@ -44,33 +51,43 @@ MixSIAR::write_JAGS_model(model_filename, resid_err, process_err, mix, source)
 # “long” 	     300,000 	   200,000 	  100 	3         Untested
 # “very long”  1,000,000 	 500,000 	  500 	3         Untested
 # “extreme” 	 3,000,000 	 1,500,000  500 	3         Untested
+<<<<<<< Updated upstream
 jags.1 <- MixSIAR::run_model(run="normal", mix, source, discr, model_filename)
+=======
+>>>>>>> Stashed changes
 
-output_options <- list(summary_save = TRUE,                         # save summary statistics as txt file
-                       summary_name = "output/summary_statistics",  # path for summary stats
-                       sup_post = TRUE,                             # suppress posterior density plot, default is FALSE
-                       plot_post_save_pdf = TRUE,                   # save posterior density plot
-                       plot_post_name = "output/posterior_density", # path for posterior density plots
-                       sup_pairs = TRUE,                            # suppress pairs plot
-                       plot_pairs_save_pdf = TRUE,                  # save pairs plot
-                       plot_pairs_name = "output/pairs_plot",       # path for pairs plot
-                       sup_xy = TRUE,                               # suppress x/y trace plot
-                       plot_xy_save_pdf = TRUE,                     # save x/y trace plot
-                       plot_xy_name = "output/xy_plot",             # path for x/y trace plot
-                       gelman = TRUE,                               # calculate Gelman-Rubin
-                       heidel = TRUE,                               # calculate Heidelberg-Welch
-                       geweke = TRUE,                               # calculate Geweke 
-                       diag_save = TRUE,                            # save diagnostics as txt file
-                       diag_name = "output/diagnostics",            # path for diagnostics
-                       indiv_effect = FALSE,                        # artifact, set to FALSE
-                       plot_post_save_png = FALSE,                  # save posterior density plot as png
-                       plot_pairs_save_png = FALSE,                 # save pairs plot as png
-                       plot_xy_save_png = FALSE,                    # save x/y trace plot as png
-                       diag_save_ggmcmc = TRUE)                    # save ggmcmc diagnostics as pdf
+jags.Env <- MixSIAR::run_model(run="very short", mix, source, discr, model_filename)
 
-# call function to save the ouputs of jags.1 following the predefined options
+output_options <- list(summary_save = TRUE,                                           # save summary statistics as txt file
+                       summary_name = "output/Environment Model/summary_statistics",  # path for summary stats
+                       sup_post = TRUE,                                               # suppress posterior density plot, default is FALSE
+                       plot_post_save_pdf = TRUE,                                     # save posterior density plot
+                       plot_post_name = "output/Environment Model/posterior_density", # path for posterior density plots
+                       sup_pairs = TRUE,                                              # suppress pairs plot
+                       plot_pairs_save_pdf = TRUE,                                    # save pairs plot
+                       plot_pairs_name = "output/Environment Model/pairs_plot",       # path for pairs plot
+                       sup_xy = TRUE,                                                 # suppress x/y trace plot
+                       plot_xy_save_pdf = TRUE,                                       # save x/y trace plot
+                       plot_xy_name = "output/Environment Model/xy_plot",             # path for x/y trace plot
+                       gelman = TRUE,                                                 # calculate Gelman-Rubin
+                       heidel = TRUE,                                                 # calculate Heidelberg-Welch
+                       geweke = TRUE,                                                 # calculate Geweke 
+                       diag_save = TRUE,                                              # save diagnostics as txt file
+                       diag_name = "output/Environment Model/diagnostics",            # path for diagnostics
+                       indiv_effect = FALSE,                                          # artifact, set to FALSE
+                       plot_post_save_png = FALSE,                                    # save posterior density plot as png
+                       plot_pairs_save_png = FALSE,                                   # save pairs plot as png
+                       plot_xy_save_png = FALSE,                                      # save x/y trace plot as png
+                       diag_save_ggmcmc = TRUE)                                       # save ggmcmc diagnostics as pdf
+
+# call function to save the ouputs of jags.Env following the predefined options
 # input 1 Yes when prompted to safely save output in working directory
-MixSIAR::output_JAGS(jags.1, mix, source, output_options) # safe to ignore warnings - NDK
+MixSIAR::output_JAGS(jags.Env, mix, source, output_options) # safe to ignore warnings - NDK
 
+<<<<<<< Updated upstream
 # save jags.1 object for further analysis
 saveRDS(jags.1,"output/jags.normal.rds")
+=======
+# save jags.Env object for further analysis
+saveRDS(jags.Env,"output/Environment Model/jags.Env.rds")
+>>>>>>> Stashed changes
