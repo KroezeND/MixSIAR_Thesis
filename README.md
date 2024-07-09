@@ -13,16 +13,8 @@ Files are organized and named in the order to be run sequentially (0-4).
         - `220729_JPM.xls - CN sum.csv`                        Smithsonian lab isotope data
         - `220801_JPM.xls - CN sum.csv`                        Smithsonian lab isotope data
         - `220519_JPM.xls - CN sum.csv`                        Smithsonian lab isotope data
-        - `Summer_Samples_1_Kroeze.csv`                        CEST lab isotope data
-        - `Summer_Samples_2_Kroeze.csv`                        CEST lab isotope data
-        - `Summer_Samples_3_Kroeze.csv`                        CEST lab isotope data
-        - `Summer_Samples_4_Kroeze.csv`                        CEST lab isotope data
-        - `Summer_Samples_5_Kroeze.csv`                        CEST lab isotope data
-        - `Summer_Samples_6_Kroeze.csv`                        CEST lab isotope data
-        - `Summer_Samples_7_Kroeze.csv`                        CEST lab isotope data
-        - `Summer_Samples_8_Kroeze.csv`                        CEST lab isotope data
+        - `CEST_Sample_Runs.csv`                               CEST lab isotope data - all runs, not including replicate testing
         - `Trial_Carbon_Data_unedited.csv`                     CEST lab isotope data - replicate trials
-        - `CEST_Sample_Runs.csv`                               CEST lab isotope data - replicate trials
         - `Corr_Trial_COMP.csv`                                CEST lab isotope data - replicate trials
         - `Milled_replicates.csv`                              CEST lab isotope data - replicate trials
      - Outputs:
@@ -37,19 +29,23 @@ Files are organized and named in the order to be run sequentially (0-4).
         - `marsh_source_all.csv`
         - `marsh-discr`                                        null trophic enrichment factors
      - Output
-        - `jags.1.rds`                                         save full jags model run as RDS object
-        - `isospace_plot`                                      d13C plot
-        - `prior_plot`                                         uniform uninformative distribution
+        - `jags.Env.rds`                                       save full jags model run as RDS object
+        - `figs/isospace_env_plot`                             d13C plot
+        - `prior_env_plot`                                     uniform uninformative distribution
+        - `diagnostics.pdf`                                    pdf for trace, density, and running means plot for each parameter
+        - `diagnostics.txt`                                    text file containing Gelman-Rubin, Geweke, and Heidelberger-Welch diagnostics
+        - `summary_statistics.txt`                             abbreviated file for main model output, group estimates, and DIC
+        - `MixSIAR_model`                                      text file with model description
+        - `posterior_density_high_sal`                         folder containing posterior density plots for group characteristics
+        - `posterior_density_low_sal`                          folder containing posterior density plots for group characteristics
 - `2_biomass_calc.R`: Calculate mixing proportion and weight densities, some plotting
      - Inputs:
           - `training.csv`
           - `jags.1.rds`
           - `bgb_biomass.csv`
      - Outputs:
-          - `bgb_biomass.rds`                                    modified to include mixing proportions and weight density
-- `3_log_lm.R`: Exploratory analysis of biomass allocation between layers
-     - Inputs:
-          - `bgb_biomass.rds`
+          - `bgb_biomass_mod.rds`                                    modified to include mixing proportions and weight density
+- `3_model_validation` temporary file holding space until model validation is pursued
      - Outputs: none
 - `4_graphing.R`: Basic plotting functions for factors
      - Inputs:
