@@ -84,10 +84,6 @@ output_options <- list(summary_save = TRUE,                                     
 # input 1 Yes when prompted to safely save output in working directory
 MixSIAR::output_JAGS(jags.Env, mix, source, output_options) # safe to ignore warnings - NDK
 
-<<<<<<< Updated upstream
-# save jags.1 object for further analysis
-saveRDS(jags.1,"output/jags.normal.rds")
-=======
 # save jags.Env object for further analysis
 saveRDS(jags.Env,"output/Environment Model/jags.Env.rds")
->>>>>>> Stashed changes
+
