@@ -70,3 +70,25 @@ holdout_sample <- function(scenario_data, target_size) {
     return(scenario_data[sample(1:nrow(scenario_data), size = min_holdout_size, replace = TRUE), ])
   }
 }
+
+average_pot_no <- function(training_layer){
+  new_training <- data.frame()
+  seen_pots <- vector(mode = "character", length = 0)
+  
+  for (i in 1:nrow(training_layer)) {
+    current_pot <- training_layer[i, "pot_no"]
+    if (current_pot %in% seen_pots) {
+      # Pot already seen, update existing row
+      # row_index <- which(training_TOP_avg$pot_no == current_pot)
+      # # training_TOP_avg[row_index, "avg_d13C"] <- 
+      #   mean(c(training_TOP_avg$d13C[row_index], training_TOP[i, "d13C"]))
+    } else {
+      # New pot, add a row with averaged d13C
+      seen_pots <- c(seen_pots, current_pot)
+      new_row <- training_layer[i, ]
+      new_row$d13C <- mean(training_layer[training_layer$pot_no == current_pot, "d13C"])
+      new_training <- rbind(new_training, new_row)
+    }
+  }
+  return(new_training)
+}

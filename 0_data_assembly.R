@@ -16,9 +16,11 @@
 # Outputs:
 # "marsh_source_all.csv" raw source isotopes formatted to MixSIAR specifications, 151 observations of 2 variables
 # "Compiled_Traits_appended.csv" traits with added weights and root-shoot-ratios, 672 observations of 35 variables
-# "training.csv" mixture distribution for training MixSIAR model, 274 observations of 17 variables
+# "training_TOP.csv" mixture distribution for training MixSIAR model, 99 observations of 17 variables
+# "training_MID.csv" mixture distribution for training MixSIAR model, 99 observations of 17 variables
+# "training_BTM.csv" mixture distribution for training MixSIAR model, 99 observations of 17 variables
 # "bgb_biomass.csv" all weights across each layer, 1692 observations of 11 variables
-# "holdout_DONOTTOUCH.csv" holdout data, 49 observations of 36 variables
+# "holdout_DONOTTOUCH.csv" holdout data, 90 observations of 15 variables
 
 library(tidyverse)
 library(here)
@@ -115,7 +117,7 @@ holdout_data <- traits_holdout %>%
   dplyr::group_by(scenario) %>%
   dplyr::do({
     data <- . # Reference to the group data
-    holdout_sample(data, target_size = 0.4 * nrow(data))
+    holdout_sample(data, target_size = 0.23 * nrow(data))
   })
 
 
@@ -135,9 +137,9 @@ table(training_data$scenario) %>% prop.table()  # proportion of training dataset
 training <- ISO_COMP[ISO_COMP$pot_no %in% training_data$pot_no,]
 
 # Add env_treatment to training dataset
-training$env_treatment <- paste0(ifelse(training$salinity == 0, "low_sal", "high_sal"),
+training$env_treatment <- paste0(ifelse(training$salinity == 0, "Rhode River", "GCREW"),
                                  "/",
-                                 ifelse(training$elev_bi == 0, "low_elev", "high_elev"))
+                                 ifelse(training$elev_bi == 0, "high inundation", "low inundation"))
 
 # Define depth conversion dictionary
 depth_conversion <- c(TOP = 0, MID = 10, BTM = 20)
@@ -161,12 +163,23 @@ for (i in 1:nrow(training)) {
   }
 }
 
+# Divide by depth layer (mixture distribution)
+training_TOP <- training[training$Depth=="TOP",]
+training_MID <- training[training$Depth=="MID",]
+training_BTM <- training[training$Depth=="BTM",]
+
+# # Average across replicates to utilize all available information
+new_training_TOP <- average_pot_no(training_TOP)
+new_training_MID <- average_pot_no(training_MID)
+new_training_BTM <- average_pot_no(training_BTM)
+
+
 # Save modified objects
 write.csv(ISO_source, "data/marsh_source_all.csv",row.names=FALSE)
 write.csv(traits_updated,"data/Compiled_Traits_appended.csv")
-write.csv(training, "data/training.csv",row.names = FALSE)
+write.csv(new_training_TOP, "data/training_TOP.csv",row.names = FALSE)
+write.csv(new_training_MID, "data/training_MID.csv",row.names = FALSE)
+write.csv(new_training_BTM, "data/training_BTM.csv",row.names = FALSE)
 write_csv(bgb_biomass, "data/bgb_biomass.csv")
 write.csv(holdout, "data/Holdout/holdout_DONOTTOUCH.csv",row.names = T)
-
-
 
