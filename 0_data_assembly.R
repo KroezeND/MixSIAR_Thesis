@@ -22,9 +22,6 @@
 # "bgb_biomass.csv" all weights across each layer, 1692 observations of 11 variables
 # "holdout_DONOTTOUCH.csv" holdout data, 90 observations of 15 variables
 
-#library(tidyverse)
-#library(here)
-
 (rm(list = ls()))
 
 source("src/data_process.R")

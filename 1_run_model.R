@@ -12,9 +12,8 @@
 #               "summary_statistics.txt",
 #               "MixSIAR_model.txt" 
 
-library(MixSIAR)
-library(tidyverse)
-library(here)
+# Required but not called by MixSIAR
+require(ggplot2)
 
 (rm(list = ls()))
 
@@ -24,19 +23,19 @@ discr.filename = "data/marsh_discr.csv"
 
 n.mod <- 3
 mix <- vector("list", n.mod) 
-mix[[1]] <- load_mix_data(filename="data/training_TOP.csv",
+mix[[1]] <- MixSIAR::load_mix_data(filename="data/training_TOP.csv",
                           iso_names=c("d13C"),
                           factors=c("env_treatment","gt"),
                           fac_random=c(FALSE,TRUE),
                           fac_nested=c(FALSE,FALSE),
                           cont_effects="seed_year")
-mix[[2]] <- load_mix_data(filename="data/training_MID.csv",
+mix[[2]] <- MixSIAR::load_mix_data(filename="data/training_MID.csv",
                           iso_names=c("d13C"),
                           factors=c("env_treatment","gt"),
                           fac_random=c(FALSE,TRUE),
                           fac_nested=c(FALSE,FALSE),
                           cont_effects="seed_year")
-mix[[3]] <- load_mix_data(filename="data/training_BTM.csv",
+mix[[3]] <- MixSIAR::load_mix_data(filename="data/training_BTM.csv",
                           iso_names=c("d13C"),
                           factors=c("env_treatment","gt"),
                           fac_random=c(FALSE,TRUE),
@@ -48,35 +47,31 @@ source <- vector("list", n.mod)
 discr <- vector("list", n.mod)
 jags.EnvGT <- vector("list", n.mod)
 for(mod in 1:n.mod){
+  
   # create sub-directory and move into it
-  source[[mod]] <- load_source_data(filename=source.filename,
+  source[[mod]] <- MixSIAR::load_source_data(filename=source.filename,
                                     source_factors=NULL,
                                     conc_dep=FALSE,
                                     data_type="raw",
                                     mix[[mod]])
   
   # load TEF data
-  discr[[mod]] <- load_discr_data(filename=discr.filename, mix[[mod]])
+  discr[[mod]] <- MixSIAR::load_discr_data(filename=discr.filename, mix[[mod]])
   
-  mainDir <- getwd()
-  setwd("output/Depth")
-  
-  changeDir <- getwd()
   subDir <- paste0("model_", mod)
-  dir.create(file.path(changeDir, subDir), showWarnings = FALSE)
-  setwd(file.path(changeDir, subDir))
-  
+  dir.create(file.path('output/Depth', subDir), showWarnings = FALSE)
+
   # isospace plot
-  plot_data(filename=paste0("isospace_plot_", mod),
+  MixSIAR::plot_data(filename=paste0("output/Depth/", subDir, "/isospace_plot_", mod),
             plot_save_pdf=TRUE,
             plot_save_png=FALSE,
             mix[[mod]], source[[mod]], discr[[mod]])
   
   # Define model structure and write JAGS model file
-  model_filename <- paste0("MixSIAR_model_", mod, ".txt")
+  model_filename <- paste0("output/Depth/", subDir, "/MixSIAR_model_", mod, ".txt")
   resid_err <- TRUE
   process_err <- TRUE
-  write_JAGS_model(model_filename, resid_err, process_err, mix[[mod]], source[[mod]])
+  MixSIAR::write_JAGS_model(model_filename, resid_err, process_err, mix[[mod]], source[[mod]])
   
   # Run the described model and save as jags object
   # run == 	   Chain Length  Burn-in 	 Thin 	# Chains  # NK Run Time
@@ -89,7 +84,7 @@ for(mod in 1:n.mod){
   # “extreme” 	 3,000,000 	 1,500,000  500 	3         Untested
   
   # Run the JAGS model
-  jags.EnvGT[[mod]] <- run_model(run="normal", mix[[mod]], source[[mod]], discr[[mod]], model_filename, alpha.prior=1)
+  jags.EnvGT[[mod]] <- MixSIAR::run_model(run="normal", mix[[mod]], source[[mod]], discr[[mod]], model_filename, alpha.prior=1)
  
   output_options <- list(
     summary_save = TRUE,                  # save summary statistics as txt file
@@ -115,10 +110,8 @@ for(mod in 1:n.mod){
     diag_save_ggmcmc = FALSE)             # save ggmcmc diagnostics as pdf
   
   
-  output_JAGS(jags.EnvGT[[mod]], mix[[mod]], source[[mod]], output_options)
+  MixSIAR::output_JAGS(jags.EnvGT[[mod]], mix[[mod]], source[[mod]], output_options)
   graphics.off()
-  # Move back up to root directory
-  setwd(mainDir)
 }
 
 
