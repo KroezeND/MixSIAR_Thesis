@@ -1,7 +1,3 @@
-library(MixSIAR)
-library(tidyverse)
-library(here)
-
 (rm(list = ls()))
 
 source("src/append_functions.R")
@@ -69,47 +65,47 @@ names(mixture) <- c("TOP","MID","BTM")
 
 colors <- c("#2d6a4f","#74c69d","#5a189a","#c77dff")
 # Plot the mixing proportion of SCAM
-mixture[["TOP"]] %>%
-  ggplot2::ggplot(aes(x = seed_year, y = p.scam, color = cohort)) +
-  geom_point() +  # Plot points for each data point
-  geom_errorbar(aes(ymin = p.scam_lower, ymax = p.scam_upper), width = 3,linewidth = 0.55) + # Add ribbon for CrI
-  geom_hline(yintercept = 0.5, linetype = "dashed", color = "red") +  # Add horizontal line
+mixture[["TOP"]] |>
+  ggplot2::ggplot(ggplot2::aes(x = seed_year, y = p.scam, color = cohort)) +
+  ggplot2::geom_point() +  # Plot points for each data point
+  ggplot2::geom_errorbar(ggplot2::aes(ymin = p.scam_lower, ymax = p.scam_upper), width = 3,linewidth = 0.55) + # Add ribbon for CrI
+  ggplot2::geom_hline(yintercept = 0.5, linetype = "dashed", color = "red") +  # Add horizontal line
   # geom_line(aes(y = p.scam), stat = "smooth", method = "loess") +  # Add smoothed line
-  scale_color_manual(values = colors,labels = c("blackwater\nancestral","blackwater\nmodern",
+  ggplot2::scale_color_manual(values = colors,labels = c("blackwater\nancestral","blackwater\nmodern",
                                                 "corn\nancestral","corn\nmodern"))+
-  facet_wrap(~ env_treatment) +  # Separate panels for each treatment
-  ylim(0,1) +
-  labs(title = "p.scam in TOP Layer by Year and Treatment (95% CrI)", x = "Year", y = "p.scam") +
-  theme_bw() + # Set a black and white theme (optional)
-  guides(color = guide_legend(title = "Age Cohort",reverse=TRUE ))
+  ggplot2::facet_wrap(~ env_treatment) +  # Separate panels for each treatment
+  ggplot2::ylim(0,1) +
+  ggplot2::labs(title = "p.scam in TOP Layer by Year and Treatment (95% CrI)", x = "Year", y = "p.scam") +
+  ggplot2::theme_bw() + # Set a black and white theme (optional)
+  ggplot2::guides(color = ggplot2::guide_legend(title = "Age Cohort",reverse=TRUE ))
 
-mixture[["MID"]] %>%
-  ggplot2::ggplot(aes(x = seed_year, y = p.scam, color = cohort)) +
-  geom_point() +  # Plot points for each data point
-  geom_errorbar(aes(ymin = p.scam_lower, ymax = p.scam_upper), width = 3,linewidth = 0.55) + # Add ribbon for CrI
-  geom_hline(yintercept = 0.5, linetype = "dashed", color = "red") +  # Add horizontal line
+mixture[["MID"]] |>
+  ggplot2::ggplot(ggplot2::aes(x = seed_year, y = p.scam, color = cohort)) +
+  ggplot2::geom_point() +  # Plot points for each data point
+  ggplot2::geom_errorbar(ggplot2::aes(ymin = p.scam_lower, ymax = p.scam_upper), width = 3,linewidth = 0.55) + # Add ribbon for CrI
+  ggplot2::geom_hline(yintercept = 0.5, linetype = "dashed", color = "red") +  # Add horizontal line
   # geom_line(aes(y = p.scam), stat = "smooth", method = "loess") +  # Add smoothed line
-  scale_color_manual(values = colors,labels = c("blackwater\nancestral","blackwater\nmodern",
+  ggplot2::scale_color_manual(values = colors,labels = c("blackwater\nancestral","blackwater\nmodern",
                                                 "corn\nancestral","corn\nmodern"))+
-  facet_wrap(~ env_treatment) +  # Separate panels for each treatment
-  ylim(0,1) +
-  labs(title = "p.scam in MID Layer by Year and Treatment (95% CrI)", x = "Year", y = "p.scam") +
-  theme_bw() + # Set a black and white theme (optional)
-  guides(color = guide_legend(title = "Age Cohort" ,reverse=TRUE))
+  ggplot2::facet_wrap(~ env_treatment) +  # Separate panels for each treatment
+  ggplot2::ylim(0,1) +
+  ggplot2::labs(title = "p.scam in MID Layer by Year and Treatment (95% CrI)", x = "Year", y = "p.scam") +
+  ggplot2::theme_bw() + # Set a black and white theme (optional)
+  ggplot2::guides(color = ggplot2::guide_legend(title = "Age Cohort" ,reverse=TRUE))
 
-mixture[["BTM"]] %>%
-  ggplot2::ggplot(aes(x = seed_year, y = p.scam, color = cohort)) +
-  geom_point() +  # Plot points for each data point
-  geom_errorbar(aes(ymin = p.scam_lower, ymax = p.scam_upper), width = 3,linewidth = 0.55) + # Add ribbon for CrI
-  geom_hline(yintercept = 0.5, linetype = "dashed", color = "red") +  # Add horizontal line
+mixture[["BTM"]] |>
+  ggplot2::ggplot(ggplot2::aes(x = seed_year, y = p.scam, color = cohort)) +
+  ggplot2::geom_point() +  # Plot points for each data point
+  ggplot2::geom_errorbar(ggplot2::aes(ymin = p.scam_lower, ymax = p.scam_upper), width = 3,linewidth = 0.55) + # Add ribbon for CrI
+  ggplot2::geom_hline(yintercept = 0.5, linetype = "dashed", color = "red") +  # Add horizontal line
   # geom_line(aes(y = p.scam), stat = "smooth", method = "loess") +  # Add smoothed line
-  scale_color_manual(values = colors,labels = c("blackwater\nancestral","blackwater\nmodern",
+  ggplot2::scale_color_manual(values = colors,labels = c("blackwater\nancestral","blackwater\nmodern",
                                                 "corn\nancestral","corn\nmodern"))+
-  facet_wrap(~ env_treatment) +  # Separate panels for each treatment
-  ylim(0,1) +
-  labs(title = "p.scam in BTM Layer by Year and Treatment (95% CrI)", x = "Year", y = "p.scam") +
-  theme_bw() + # Set a black and white theme (optional)
-  guides(color = guide_legend(title = "Age Cohort",reverse=TRUE))
+  ggplot2::facet_wrap(~ env_treatment) +  # Separate panels for each treatment
+  ggplot2::ylim(0,1) +
+  ggplot2::labs(title = "p.scam in BTM Layer by Year and Treatment (95% CrI)", x = "Year", y = "p.scam") +
+  ggplot2::theme_bw() + # Set a black and white theme (optional)
+  ggplot2::guides(color = ggplot2::guide_legend(title = "Age Cohort",reverse=TRUE))
 
 
 saveRDS(bgb_biomass_layer,"output/bgb_biomass_layer.rds")
