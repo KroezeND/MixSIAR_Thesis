@@ -121,6 +121,11 @@ holdout_data <- traits_holdout |>
 holdout_ids <- unique(holdout_data$pot_no)
 
 holdout <- ISO_COMP[ISO_COMP$pot_no %in% holdout_ids,] # actual hold out data to be saved
+holdout$env_treatment <- paste0(ifelse(holdout$salinity == 0, "Rhode River", "GCREW"),
+                                    "/",
+                                    ifelse(holdout$elev_bi == 0, "high inundation", "low inundation"))
+holdout$data <- "validation"
+
 
 # Training data is everything not in holdout
 training_data <- traits_holdout[!(traits_holdout$pot_no %in% holdout_ids), ]
@@ -141,24 +146,26 @@ training$env_treatment <- paste0(ifelse(training$salinity == 0, "Rhode River", "
 # Define depth conversion dictionary
 depth_conversion <- c(TOP = 0, MID = 10, BTM = 20)
 
-# Append training with midpoint value from bgb_biomass
-for (i in 1:nrow(training)) {
-  current_pot_no <- training$pot_no[i]
-  current_depth <- training$Depth[i]
-  converted_depth <- depth_conversion[[current_depth]]  # Convert depth from training
-  
-  # Matching rows based on pot_no and converted depth
-  matching_rows <- bgb_biomass[bgb_biomass$pot_no == current_pot_no & bgb_biomass$segment_top == converted_depth,]
-  
-  # Check if a matching row is found
-  if (nrow(matching_rows) > 0) {
-    # Extract midpoint from the matching row
-    matched_midpoint <- matching_rows$midpoint
-    
-    # Append the new row to training
-    training$midpoint[training$pot_no == current_pot_no & training$Depth==current_depth] <- matched_midpoint
-  }
-}
+# # Append training with midpoint value from bgb_biomass
+# for (i in 1:nrow(training)) {
+#   current_pot_no <- training$pot_no[i]
+#   current_depth <- training$Depth[i]
+#   converted_depth <- depth_conversion[[current_depth]]  # Convert depth from training
+#   
+#   # Matching rows based on pot_no and converted depth
+#   matching_rows <- bgb_biomass[bgb_biomass$pot_no == current_pot_no & bgb_biomass$segment_top == converted_depth,]
+#   
+#   # Check if a matching row is found
+#   if (nrow(matching_rows) > 0) {
+#     # Extract midpoint from the matching row
+#     matched_midpoint <- matching_rows$midpoint
+#     
+#     # Append the new row to training
+#     training$midpoint[training$pot_no == current_pot_no & training$Depth==current_depth] <- matched_midpoint
+#   }
+# }
+
+training$data <- "training"
 
 # Divide by depth layer (mixture distribution)
 training_TOP <- training[training$Depth=="TOP",]
@@ -173,10 +180,10 @@ new_training_BTM <- average_pot_no(training_BTM)
 
 # Save modified objects
 write.csv(ISO_source, "data/marsh_source_all.csv",row.names=FALSE)
-write.csv(traits_updated,"data/Compiled_Traits_appended.csv")
+write.csv(traits_updated,"data/Compiled_Traits_appended.csv",row.names = FALSE)
 write.csv(new_training_TOP, "data/training_TOP.csv",row.names = FALSE)
 write.csv(new_training_MID, "data/training_MID.csv",row.names = FALSE)
 write.csv(new_training_BTM, "data/training_BTM.csv",row.names = FALSE)
-write.csv(bgb_biomass, "data/bgb_biomass.csv")
-write.csv(holdout, "data/Holdout/holdout_DONOTTOUCH.csv",row.names = T)
+write.csv(bgb_biomass, "data/bgb_biomass.csv",row.names = F)
+write.csv(holdout, "data/Holdout/holdout_DONOTTOUCH.csv",row.names = F)
 

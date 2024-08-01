@@ -7,14 +7,14 @@ source("src/append_functions.R")
 bgb_biomass <- read.csv("data/bgb_biomass.csv") 
 
 # Load in Clean and Formatted Data
-mixture_TOP <- read.csv("data/training_TOP.csv") # training dataset 
-mixture_MID <- read.csv("data/training_MID.csv") # training dataset 
-mixture_BTM <- read.csv("data/training_BTM.csv") # training dataset 
+mixture_TOP <- read.csv("data/full_TOP.csv") # training dataset 
+mixture_MID <- read.csv("data/full_MID.csv") # training dataset 
+mixture_BTM <- read.csv("data/full_BTM.csv") # training dataset 
 
 mixture <- list(mixture_TOP,mixture_MID,mixture_BTM)
 
 # Load jags.1 output from model run script
-jags.EnvGT <- readRDS("output/Depth/jags.EnvGT.rds")
+jags.EnvGT <- readRDS("output/Full/jags.EnvGT.rds")
 
 bgb_biomass_layer <- list()
 for(mod in 1:length(jags.EnvGT)){

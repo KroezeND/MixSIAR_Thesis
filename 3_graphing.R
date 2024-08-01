@@ -58,7 +58,7 @@ for(i in names(bgb_biomass_layer)){
 
 
 
-bgb_biomass_layer[["TOP"]] |>
+COMP_TOP <-bgb_biomass_layer[["TOP"]] |>
   dplyr::mutate(env_treatment.x = sub(pattern = '/', replacement = '/\n', x = env_treatment.x)) |>
   ggplot2::ggplot(ggplot2::aes(y=env_treatment.x, x=prop_scam, fill = cohort)) + 
   ggplot2::geom_violin(position=ggplot2::position_dodge(0.95),scale = 'width',trim = T,drop = F) +  # Dodge violin plots slightly
@@ -69,10 +69,11 @@ bgb_biomass_layer[["TOP"]] |>
   ggplot2::labs(y = "Environmental Treatment", x = expression("Dry Weight Density SCAM under Competition (g/cm"^3*")")) + 
   ggplot2::theme_bw()+
   ggplot2::xlim(0,0.022) +
-  ggplot2::guides(fill = ggplot2::guide_legend(title ="Cohort",reverse=TRUE))
+  ggplot2::guides(fill = ggplot2::guide_legend(title ="Cohort",reverse=TRUE)) +
+  ggplot2::theme(legend.position = "none")
 
 
-bgb_biomass_layer[["MID"]] |>
+COMP_MID <-bgb_biomass_layer[["MID"]] |>
   dplyr::mutate(env_treatment.x = sub(pattern = '/', replacement = '/\n', x = env_treatment.x)) |>
   ggplot2::ggplot(ggplot2::aes(y=env_treatment.x, x=prop_scam, fill = cohort)) + 
   ggplot2::geom_violin(position=ggplot2::position_dodge(0.95),scale = 'width',trim = T,drop = F) +  # Dodge violin plots slightly
@@ -83,9 +84,10 @@ bgb_biomass_layer[["MID"]] |>
   ggplot2::labs(y = "Environmental Treatment", x = expression("Dry Weight Density SCAM under Competition (g/cm"^3*")")) + 
   ggplot2::theme_bw()+
   ggplot2::xlim(0,0.01) +
-  ggplot2::guides(fill = ggplot2::guide_legend(title ="Cohort",reverse=TRUE))
+  ggplot2::guides(fill = ggplot2::guide_legend(title ="Cohort",reverse=TRUE)) +
+  ggplot2::theme(legend.position = "none")
 
-bgb_biomass_layer[["BTM"]] |>
+COMP_BTM <- bgb_biomass_layer[["BTM"]] |>
   dplyr::mutate(env_treatment.x = sub(pattern = '/', replacement = '/\n', x = env_treatment.x)) |>
   ggplot2::ggplot(ggplot2::aes(y=env_treatment.x, x=prop_scam, fill = cohort)) + 
   ggplot2::geom_violin(position=ggplot2::position_dodge(0.95),scale = 'width',trim = T,drop = F) +  # Dodge violin plots slightly
@@ -96,7 +98,8 @@ bgb_biomass_layer[["BTM"]] |>
   ggplot2::labs(y = "Environmental Treatment", x = expression("Dry Weight Density SCAM under Competition (g/cm"^3*")")) + 
   ggplot2::theme_bw()+
   ggplot2::xlim(0,0.0019) +
-  ggplot2::guides(fill = ggplot2::guide_legend(title ="Cohort",reverse=TRUE))
+  ggplot2::guides(fill = ggplot2::guide_legend(title ="Cohort",reverse=TRUE)) +
+  ggplot2::theme(legend.position = "none")
 
 # Comparison to SCAM Monocultures
 bgb <- bgb_biomass[bgb_biomass$species=="scam",]
@@ -119,7 +122,7 @@ bgb_TOP <- bgb[bgb$Depth == "TOP",]
 bgb_MID <- bgb[bgb$Depth == "MID",]
 bgb_BTM <- bgb[bgb$Depth == "BTM",]
 
-bgb_TOP |>
+SCAM_TOP <- bgb_TOP |>
   dplyr::mutate(env_treatment = sub(pattern = '/', replacement = '/\n', x = env_treatment)) |>
   ggplot2::ggplot(ggplot2::aes(y=env_treatment, x=weight_density, fill = cohort)) + 
   ggplot2::geom_violin(position=ggplot2::position_dodge(0.95),scale = 'width',trim = TRUE) +  # Dodge violin plots slightly
@@ -130,9 +133,10 @@ bgb_TOP |>
   ggplot2::labs(y = "Environmental Treatment", x = expression(Weight ~ Density~SCAM~Monoculture~(g/cm^{3}))) + # Custom labels
   ggplot2::theme_bw()+
   ggplot2::xlim(0,0.022) +
-  ggplot2::guides(fill = ggplot2::guide_legend(title = "Cohort",reverse=TRUE)) 
+  ggplot2::guides(fill = ggplot2::guide_legend(title = "Cohort",reverse=TRUE))  +
+  ggplot2::theme(legend.position = "none")
 
-bgb_MID |>
+SCAM_MID <-bgb_MID |>
   dplyr::mutate(env_treatment = sub(pattern = '/', replacement = '/\n', x = env_treatment)) |>
   ggplot2::ggplot(ggplot2::aes(y=env_treatment, x=weight_density, fill = cohort)) + 
   ggplot2::geom_violin(position=ggplot2::position_dodge(0.95),scale = 'width',trim = TRUE) +  # Dodge violin plots slightly
@@ -143,9 +147,10 @@ bgb_MID |>
   ggplot2::labs(y = "Environmental Treatment", x = expression(Weight ~ Density~SCAM~Monoculture~(g/cm^{3}))) + # Custom labels
   ggplot2::theme_bw()+
   ggplot2::xlim(0,0.01) +
-  ggplot2::guides(fill = ggplot2::guide_legend(title = "Cohort",reverse=TRUE)) 
+  ggplot2::guides(fill = ggplot2::guide_legend(title = "Cohort",reverse=TRUE))  +
+  ggplot2::theme(legend.position = "none")
 
-bgb_BTM |>
+SCAM_BTM <- bgb_BTM |>
   dplyr::mutate(env_treatment = sub(pattern = '/', replacement = '/\n', x = env_treatment)) |>
   ggplot2::ggplot(ggplot2::aes(y=env_treatment, x=weight_density, fill = cohort)) + 
   ggplot2::geom_violin(position=ggplot2::position_dodge(0.95),scale = 'width',trim = TRUE) +  # Dodge violin plots slightly
@@ -156,4 +161,9 @@ bgb_BTM |>
   ggplot2::labs(y = "Environmental Treatment", x = expression(Weight ~ Density~SCAM~Monoculture~(g/cm^{3}))) + # Custom labels
   ggplot2::theme_bw()+
   ggplot2::xlim(0,0.0019) +
-  ggplot2::guides(fill = ggplot2::guide_legend(title = "Cohort",reverse=TRUE)) 
+  ggplot2::guides(fill = ggplot2::guide_legend(title = "Cohort",reverse=TRUE)) +
+  ggplot2::theme(legend.position = "none")
+
+gridExtra::grid.arrange(COMP_TOP, SCAM_TOP, ncol=2)  
+gridExtra::grid.arrange(COMP_MID, SCAM_MID, ncol=2)  
+gridExtra::grid.arrange(COMP_BTM, SCAM_BTM, ncol=2)  
