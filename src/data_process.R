@@ -76,7 +76,7 @@ average_pot_no <- function(training_layer){
   seen_pots <- vector(mode = "character", length = 0)
   
   for (i in 1:nrow(training_layer)) {
-    current_pot <- training_layer[i, "pot_no"]
+    current_pot <- training_layer$pot_no[i]
     if (current_pot %in% seen_pots) {
       # Pot already seen, update existing row
       # row_index <- which(training_TOP_avg$pot_no == current_pot)
@@ -85,9 +85,9 @@ average_pot_no <- function(training_layer){
     } else {
       # New pot, add a row with averaged d13C
       seen_pots <- c(seen_pots, current_pot)
-      new_row <- training_layer[i, ]
-      new_row$d13C <- mean(training_layer[training_layer$pot_no == current_pot, "d13C"])
-      new_training <- rbind(new_training, new_row)
+      new_row <- training_layer[training_layer$pot_no==current_pot,]
+      new_row$d13C <- mean(training_layer$d13C[training_layer$pot_no == current_pot])
+      new_training <- rbind(new_training, new_row[1,])
     }
   }
   return(new_training)
